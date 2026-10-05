@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Master Pro - Advanced Online Coding Quiz</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app">
+    <!-- NAVIGATION BAR -->
+    <header class="nav">
+      <div class="nav-left">
+        <button class="logo-btn" onclick="goHome()" title="Go to Home">
+          <div class="logo-icon">🧠</div>
+          <span class="logo-title">Quiz Master</span>
+        </button>
+        <div class="nav-breadcrumbs" id="breadcrumbTrail">
+          <span class="crumb-active">Languages</span>
+        </div>
+      </div>
+      <div class="nav-right">
+        <div class="badge" id="navBadge">10 Languages</div>
+        <button class="nav-btn" onclick="goHome()" title="Home Screen">
+          🏠 Home
+        </button>
+      </div>
+    </header>
+
+    <!-- ====================================================================
+         SCREEN 1: PROGRAMMING LANGUAGE SELECTION (HOME)
+         ==================================================================== -->
+    <section id="home-screen" class="screen active">
+      <div class="card hero">
+        <div class="icon">🎯</div>
+        <h1>Test & Level Up Your Knowledge</h1>
+        <p>Select a programming language below to explore topic-focused quizzes with real-time feedback and detailed answer explanations.</p>
+
+        <!-- Search and Category Filters -->
+        <div class="search-filter-bar">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="langSearchInput" placeholder="Search language (e.g. C, Python, Java)..." autocomplete="off">
+          </div>
+          <div class="filter-pills">
+            <button type="button" class="filter-pill active" data-category="all" onclick="filterLanguages('all', this)">All</button>
+            <button type="button" class="filter-pill" data-category="systems" onclick="filterLanguages('systems', this)">Systems (C, C++)</button>
+            <button type="button" class="filter-pill" data-category="web" onclick="filterLanguages('web', this)">Web (JS, HTML, CSS)</button>
+            <button type="button" class="filter-pill" data-category="enterprise" onclick="filterLanguages('enterprise', this)">Enterprise (Java)</button>
+            <button type="button" class="filter-pill" data-category="scripting" onclick="filterLanguages('scripting', this)">Scripting & Mobile</button>
+            <button type="button" class="filter-pill" data-category="database" onclick="filterLanguages('database', this)">Database (SQL)</button>
+          </div>
+        </div>
+
+        <!-- Languages Cards Grid -->
+        <div class="languages-grid" id="languagesGrid">
+          <!-- Populated dynamically via script.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 2: TOPIC SELECTION BASED ON LANGUAGE
+         ==================================================================== -->
+    <section id="topics-screen" class="screen">
+      <div class="card">
+        <div class="topic-header-bar">
+          <button class="back-link" onclick="goHome()">
+            ← Back to Languages
+          </button>
+          <div class="search-box" style="max-width: 300px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="topicSearchInput" placeholder="Filter topics..." autocomplete="off">
+          </div>
+        </div>
+
+        <!-- Language Banner -->
+        <div class="topic-banner">
+          <div class="topic-banner-icon" id="topicBannerIcon">🅲</div>
+          <div class="topic-banner-info">
+            <h2 id="topicBannerTitle">C Language Topics</h2>
+            <p id="topicBannerDesc">Select a topic below to test your mastery with tailored multiple-choice questions.</p>
+          </div>
+        </div>
+
+        <!-- Topics Grid -->
+        <div class="topics-grid" id="topicsGrid">
+          <!-- Populated dynamically via script.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 3: TOPIC-BASED ACTIVE QUIZ
+         ==================================================================== -->
+    <section id="quiz-screen" class="screen">
+      <div class="card">
+        <!-- Meta Details -->
+        <div class="quiz-header-meta">
+          <div class="quiz-tags">
+            <span class="topic-pill" id="quizTopicPill">C → Arrays</span>
+            <span class="diff-pill diff-mixed" id="quizDiffPill">Mixed</span>
+          </div>
+          <div style="display:flex; align-items:center; gap: 10px;">
+            <span id="counter" style="font-size: 14px; font-weight:700;">Question 1 of 10</span>
+            <span class="quiz-score-badge" id="liveScore">Score: 0</span>
+          </div>
+        </div>
+
+        <!-- Animated Progress Bar -->
+        <div class="progress">
+          <div id="bar" class="bar"></div>
+        </div>
+
+        <!-- Question Prompt Area -->
+        <div class="question-box">
+          <div class="question-number-tag" id="questionNumTag">Question 1</div>
+          <div id="questionText" class="question">Loading question...</div>
+        </div>
+
+        <!-- 4 Multiple-Choice Options -->
+        <div id="optionsBox" class="options">
+          <!-- Options rendered dynamically -->
+        </div>
+
+        <!-- Unselected Warning Hint -->
+        <div class="selection-hint" id="selectionHint">
+          ⚠️ Please select an answer before continuing!
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="actions">
+          <button type="button" class="secondary" onclick="exitQuiz()">
+            ✕ Exit Quiz
+          </button>
+          <div class="actions-right">
+            <button type="button" id="prevBtn" class="outline-btn" onclick="prevQuestion()">
+              ← Previous
+            </button>
+            <button type="button" id="nextBtn" class="primary" onclick="nextQuestion()">
+              Next →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 4: FINAL RESULTS PAGE
+         ==================================================================== -->
+    <section id="result-screen" class="screen">
+      <div class="card result">
+        <div class="icon">🎉</div>
+        <h1>Quiz Completed!</h1>
+
+        <div class="result-badge-row">
+          <span class="topic-pill" id="resultLangTag">C</span>
+          <span class="topic-pill" id="resultTopicTag">Arrays</span>
+          <span class="diff-pill diff-mixed" id="resultDiffTag">MIXED</span>
+        </div>
+
+        <div id="finalScore" class="score">8 / 10</div>
+        <div>
+          <span class="percentageBadge percentage-badge" id="percentageBadge">80% Score</span>
+        </div>
+        <div class="stars" id="resultStars">⭐⭐⭐⭐⭐</div>
+
+        <p class="result-message" id="resultMessage">
+          Great job! Keep learning and sharpening your programming skills.
+        </p>
+
+        <!-- Detailed Result Metrics -->
+        <div class="statrow">
+          <div class="stat">
+            <b id="statTotal">10</b>
+            <span class="small">Total Questions</span>
+          </div>
+          <div class="stat stat-correct">
+            <b id="statCorrect">8</b>
+            <span class="small">Correct Answers</span>
+          </div>
+          <div class="stat stat-wrong">
+            <b id="statWrong">2</b>
+            <span class="small">Wrong Answers</span>
+          </div>
+          <div class="stat stat-accuracy">
+            <b id="statAccuracy">80%</b>
+            <span class="small">Accuracy Rate</span>
+          </div>
+        </div>
+
+        <!-- Result Action Buttons -->
+        <div class="result-actions">
+          <button class="primary review-btn-prominent" onclick="openReview('all')">
+            📋 Review Answers
+          </button>
+          <div class="secondary-actions-row">
+            <button class="secondary" onclick="retryQuiz()">
+              🔄 Retry Quiz
+            </button>
+            <button class="secondary" onclick="goToTopics()">
+              📂 Try Another Topic
+            </button>
+            <button class="secondary" onclick="goHome()">
+              🌐 Choose Another Language
+            </button>
+            <button class="outline-btn" onclick="goHome()">
+              🏠 Home
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 5: ANSWER REVIEW PAGE
+         ==================================================================== -->
+    <section id="review-screen" class="screen">
+      <div class="card">
+        <div class="review-header-card">
+          <div class="review-summary-info">
+            <h2 id="reviewTitle">📋 Answer Review</h2>
+            <p id="reviewSubtitle">Review your answers and learn from detailed explanations below.</p>
+          </div>
+          <button class="outline-btn btn-sm" onclick="showScreen('result-screen')">
+            ← Back to Scorecard
+          </button>
+        </div>
+
+        <!-- Filter tabs for quick review -->
+        <div class="review-filter-tabs">
+          <button type="button" class="review-filter-btn active" data-filter="all" id="reviewTabAll" onclick="filterReview('all', this)">
+            All Questions (10)
+          </button>
+          <button type="button" class="review-filter-btn" data-filter="correct" id="reviewTabCorrect" onclick="filterReview('correct', this)">
+            ✅ Correct (8)
+          </button>
+          <button type="button" class="review-filter-btn" data-filter="wrong" id="reviewTabWrong" onclick="filterReview('wrong', this)">
+            ❌ Wrong (2)
+          </button>
+        </div>
+
+        <!-- Review Question Cards List -->
+        <div class="review-list" id="reviewList">
+          <!-- Populated dynamically via script.js -->
+        </div>
+
+        <!-- Review Footer Navigation -->
+        <div class="review-footer-actions">
+          <button class="primary" onclick="retryQuiz()">
+            🔄 Retry Quiz
+          </button>
+          <button class="secondary" onclick="goToTopics()">
+            📂 Try Another Topic
+          </button>
+          <button class="secondary" onclick="goHome()">
+            🌐 Choose Another Language
+          </button>
+          <button class="outline-btn" onclick="goHome()">
+            🏠 Home
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ====================================================================
+       QUIZ SETTINGS MODAL DIALOG
+       ==================================================================== -->
+  <div class="modal-overlay" id="settingsModal" onclick="if(event.target === this) closeQuizSettings()">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3>Quiz Settings</h3>
+          <span class="modal-topic-badge" id="modalTopicBadge">C → Arrays</span>
+        </div>
+        <button class="close-btn" onclick="closeQuizSettings()" title="Close Settings">✕</button>
+      </div>
+
+      <!-- Question Count Setting -->
+      <div class="setting-group">
+        <label class="setting-label">Number of Questions</label>
+        <div class="setting-options-grid">
+          <div class="setting-chip" data-q-count="5" onclick="setQuestionCountChip(5)">5 Qs</div>
+          <div class="setting-chip selected" data-q-count="10" onclick="setQuestionCountChip(10)">10 Qs</div>
+          <div class="setting-chip" data-q-count="15" onclick="setQuestionCountChip(15)">15 Qs</div>
+          <div class="setting-chip" data-q-count="20" onclick="setQuestionCountChip(20)">20 Qs</div>
+        </div>
+      </div>
+
+      <!-- Difficulty Setting -->
+      <div class="setting-group">
+        <label class="setting-label">Difficulty Level</label>
+        <div class="setting-options-grid">
+          <div class="setting-chip selected" data-diff="mixed" onclick="setDifficultyChip('mixed')">Mixed</div>
+          <div class="setting-chip" data-diff="easy" onclick="setDifficultyChip('easy')">Easy</div>
+          <div class="setting-chip" data-diff="medium" onclick="setDifficultyChip('medium')">Medium</div>
+          <div class="setting-chip" data-diff="hard" onclick="setDifficultyChip('hard')">Hard</div>
+        </div>
+      </div>
+
+      <!-- Helper Notice -->
+      <div class="modal-info-note" id="modalInfoNote">
+        If fewer questions are available for the selected criteria, all matching questions will be loaded automatically.
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-actions">
+        <button type="button" class="outline-btn" onclick="closeQuizSettings()">Cancel</button>
+        <button type="button" class="primary" onclick="startQuiz()">Start Quiz 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast" id="toast">Notice message</div>
+
+  <!-- Javascript Logic -->
+  <script src="script.js"></script>
+</body>
+</html>
